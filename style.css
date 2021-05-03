@@ -1,0 +1,110 @@
+:root {
+
+    --main-color: #7200CE;
+    --flame: #E4572E;
+    --light-grey: #cacaca;
+    --ghost-white: #FBFCFF;
+    --green-blue-crayola: #058ED9;
+
+}
+
+
+body {
+
+    padding: 0;
+
+    padding-top: 20px;
+
+    margin: 0;
+
+    background-color: black;
+}
+
+.app {
+
+    /* background-color: navy; */
+
+    width: 1000px;
+    height: 800px;
+
+    display: flex;
+
+    flex-flow: row;
+
+    margin: 0 auto;
+
+    /* justify-content: center; */
+    align-items: stretch;
+    
+
+    border-radius: 20px;
+
+    border: solid 5px var(--green-blue-crayola);
+
+}
+
+.app .app-wrapper-inner {
+
+    flex: 1 1 auto;
+    
+    /* width: 100%; */
+
+    /* background-color: red; */
+
+    display: flex;
+
+    flex-direction: column;
+
+    padding: 10px;
+
+
+}
+
+
+.app .app-wrapper-inner .header {
+
+    flex: 0 0 30px;
+
+    width: 100%;
+    /* background-color: green; */
+
+    border-bottom: solid 2px var(--green-blue-crayola);
+
+    font-size: 2rem;
+    color: white;
+
+    margin-bottom: 20px;
+
+
+    
+}
+
+.app .app-wrapper-inner .sketch-wrapper {
+
+    flex: 1 1 auto;
+    /* background-color: lightgray; */
+
+    display: flex;
+
+    flex-flow: row;
+
+    align-items: center;
+    justify-content: center;
+}
+
+#sketch-container {
+
+    flex: 0 0 950px;
+    height: 700px;
+    /* background-color: rgb(132, 0, 255); */
+
+}
+
+.app .footer {
+
+    flex: 0 0 60px;
+    /* background-color: red; */
+
+    border-top: solid 1px black;
+    
+}
