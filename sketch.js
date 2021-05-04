@@ -43,6 +43,9 @@ class Perceptron {
 
         this.isTraining = false
         this.guessCorrect = true
+        this.fillColor = color(0,0,0,0)
+
+        this.pulseRate = 30
         
 
     }
@@ -54,14 +57,14 @@ class Perceptron {
         translate(this.x, this.y)
 
         
-        push()
+        // push()
 
-        noFill()
-        stroke(purple)
-        strokeWeight(1)
-        rect(0, 0, this.width, this.height)
+        // noFill()
+        // stroke(purple)
+        // strokeWeight(1)
+        // rect(0, 0, this.width, this.height)
 
-        pop()
+        // pop()
         
             
 
@@ -70,9 +73,10 @@ class Perceptron {
             push()
             noFill()
             strokeWeight(map(sin(frameCount/20), -1, 1, 8, 10))
-            stroke(color(blue.levels[0], blue.levels[1], blue.levels[2], map(sin(frameCount/20) + 1, -1, 1, 0, 255)))
+            stroke(color(blue.levels[0], blue.levels[1], blue.levels[2], map(sin(frameCount/this.pulseRate), -1, 1, 0, 255)))
             // console.log(frameCount, map(sin(frameCount/50), -1, 1, 0, 255))
             // console.log(blue[0], blue[1], blue[2], blue[4])
+            this.fillColor = color(blue.levels[0], blue.levels[1], blue.levels[2], map(cos(frameCount/this.pulseRate), -1, 1, 0, 255))
             
             circle(this.width/2, this.height/2, 90)
             pop()
@@ -80,7 +84,7 @@ class Perceptron {
         
 
         push()
-        noFill()
+        fill(this.fillColor)
         strokeWeight(4)
         stroke(white)
 
@@ -90,7 +94,7 @@ class Perceptron {
 
         //Draw the inputs Label
         push()
-
+        
         let labelYValue = 50
 
         textSize(16)
@@ -112,8 +116,11 @@ class Perceptron {
         pop()
 
         //Draw input one box
+        push()
+        noFill()
         strokeWeight(3)
         rect(this.input1BoxPosition.x, this.input1BoxPosition.y, this.inputBoxDimensions.width, this.inputBoxDimensions.height, 5, 5, 5, 5)
+        pop()
 
         if (this.input0 !== undefined) {
             
@@ -125,7 +132,20 @@ class Perceptron {
             text(this.input0, this.input1BoxPosition.x + this.inputBoxDimensions.width/2, this.input1BoxPosition.y + this.inputBoxDimensions.height/2)
             pop()
         }
+
+        //Add input 1 label
+        push()
+        fill(red)
+        noStroke()
+        textAlign(RIGHT,CENTER)
+        textSize(20)
+        stroke(red)
+        strokeWeight(2)
+        text("X", this.input1BoxPosition.x - 10, this.input1BoxPosition.y + this.inputBoxDimensions.height/2)
+        text("Y", this.input1BoxPosition.x - 10, this.input2BoxPosition.y + this.inputBoxDimensions.height/2)
+        // text('X', 0, 0)
         
+        pop()
         
         push()
         let arrow_length = 90
@@ -142,6 +162,7 @@ class Perceptron {
 
         //Draw the second input box
         push()
+        noFill()
         rect(this.input2BoxPosition.x, this.input2BoxPosition.y, this.inputBoxDimensions.width, this.inputBoxDimensions.height, 5, 5, 5, 5)
 
         translate(this.input2BoxPosition.x+this.inputBoxDimensions.width+10, this.input2BoxPosition.y+this.inputBoxDimensions.height/2)
@@ -278,7 +299,7 @@ class Perceptron {
         
         pop()
         
-        //Draw weight 0
+        // Draw weight 0
         noStroke()
         fill(blue)
         textSize(13)
@@ -381,7 +402,7 @@ class Clickable {
 
 class Button extends Clickable {
 
-    constructor(_x, _y, _w, _h, _label, _callback) {
+    constructor(_x, _y, _w, _h, _label, _callback, _disabled = false) {
 
         super(_x, _y, _w, _h, _callback)
 
@@ -389,7 +410,28 @@ class Button extends Clickable {
         
         this.fill = blue
         this.fillActive = purple
+        this.labelFill = white
 
+        this.disabled = _disabled
+        if (this.disabled) {
+
+            this.disable()
+        }
+
+    }
+
+    disable() {
+
+        this.disabled = true
+        this.fill = color(130)
+        this.labelFill = color(170)
+    }
+
+    enable() {
+
+        this.disabled = false
+        this.fill = blue
+        this.labelFill = white
     }
 
     show() {
@@ -402,7 +444,7 @@ class Button extends Clickable {
 
         textAlign(CENTER, CENTER)
 
-        fill(white)
+        fill(this.labelFill)
         text(this.label, this.width/2, this.height/2)
         pop()
     }
@@ -615,16 +657,16 @@ class Slider extends Clickable {
         push()
         translate(this.x, this.y)
         
-        fill('aqua')
+        fill(blue)
         noStroke()
         
 
         if (this.isLeft) {
-            rect(0,0,this.width-this.height/2, this.height)
+            rect(0,0,this.width-this.height/2, this.height, 5, 0, 0, 5)
             triangle(this.width-this.height/2, 0, this.width, this.height/2, this.width - this.height/2, this.height)
         } else {
             triangle(0, this.height/2, this.height/2, 0, this.height/2, this.height)
-            rect(this.height/2, 0, this.width - this.height/2, this.height)
+            rect(this.height/2, 0, this.width - this.height/2, this.height, 0, 5, 5, 0)
         }
         
         
@@ -676,11 +718,15 @@ class lineFunctionDisplay {
         push()
 
         translate(this.x, this.y)
-
+        // noFill()
+        // stroke(blue)
+        // rect(0,0,300, 100)
         noStroke()
         fill(white)
         textSize(40)
+        // textAlign(CENTER, CENTER)
         
+        // text("y = mx + b", 150, 50)
         text(`y = ${this.slope.toFixed(2)}x ${(this.b > 0) ? " + " : " - "}${Math.abs(this.b).toFixed(2)}`, 0, 0)
         // text(`${this.slope}x `, 40, )
 
@@ -699,7 +745,7 @@ let initializeButton
 let trainButton
 let trainButtonSlow
 let classifyWithPerceptronButton
-let classiyButtonSlow
+let classifyWithPerceptronButtonSlow
 
 function setup() {
 
@@ -764,169 +810,203 @@ function setup() {
             
         }
 
+        initializeButton.enable()
+
     })
+
+    
 
     initializeButton = new Button(buttonWidth + 20, 550, buttonWidth, buttonHeight, "Initialize Perceptron", (el) => {
 
-        el.hasMouseFocus = true
-        perceptron.initialized = true
+        if (!el.disabled) {
 
-        perceptronLineFn.slope = -perceptron.weights[0]/perceptron.weights[1]
-        perceptronLineFn.b = -perceptron.weights[2]/perceptron.weights[1]
-
-        grid.updatePerceptronLine((x) => { return (-perceptronLineFn.slope * x) - perceptronLineFn.b})
-
-    })
-
-    trainButtonSlow = new Button(2 * buttonWidth + 2*20, 550 + buttonHeight + 20, buttonWidth, buttonHeight, "Train Perceptron\n(SLOW)", (el) => {
-
-        el.hasMouseFocus = true
-
-        perceptron.isTraining = true
-        
-        // let point = 0;
-        
-        // let animateInterval = setInterval(() => {
-        
-        pointCounter = 0
-        
-        let trainingAnimation = setInterval(() => {
-
-            // for (let aPoint of grid.points) {
-
-                // if (point >= grid.points.length) {
-                //     clearInterval(animateInterval)
-                //     grid.highlightPoint = false
-                //     return
-                // }
-    
-                
-                // aPoint = grid.points[point]
-                // grid.highlightPoint = aPoint 
-            let aPoint = grid.points[pointCounter % grid.points.length]
-
-            perceptron.train([aPoint.x, aPoint.y, 1], aPoint.classification)
-    
-                // point++
-                
-
-            // }
+            el.hasMouseFocus = true
+            perceptron.initialized = true
 
             perceptronLineFn.slope = -perceptron.weights[0]/perceptron.weights[1]
             perceptronLineFn.b = -perceptron.weights[2]/perceptron.weights[1]
 
             grid.updatePerceptronLine((x) => { return (-perceptronLineFn.slope * x) - perceptronLineFn.b})
 
-            pointCounter++
-            // console.log(pointCounter)
+            classifyWithPerceptronButton.enable()
+            classifyWithPerceptronButtonSlow.enable()
+            trainButton.enable()
+            trainButtonSlow.enable()
 
-            if (pointCounter >= grid.points.length * 20) {
-                clearInterval(trainingAnimation)
+        }
+
+    }, true)
+
+    trainButtonSlow = new Button(500, 550 + buttonHeight + 20, buttonWidth, buttonHeight, "Train Perceptron\n(SLOW)", (el) => {
+
+        if (!el.disabled) {
+
+            perceptron.pulseRate = 10
+
+            el.hasMouseFocus = true
+
+            perceptron.isTraining = true
+            
+            // let point = 0;
+            
+            // let animateInterval = setInterval(() => {
+            
+            pointCounter = 0
+            
+            let trainingAnimation = setInterval(() => {
+
+                // for (let aPoint of grid.points) {
+
+                    // if (point >= grid.points.length) {
+                    //     clearInterval(animateInterval)
+                    //     grid.highlightPoint = false
+                    //     return
+                    // }
+        
+                    
+                    // aPoint = grid.points[point]
+                    // grid.highlightPoint = aPoint 
+                let aPoint = grid.points[pointCounter % grid.points.length]
+
+                perceptron.train([aPoint.x, aPoint.y, 1], aPoint.classification)
+        
+                    // point++
+                    
+
+                // }
+
+                if (pointCounter % grid.points.length/2 === 0) {
+
+                    perceptronLineFn.slope = -perceptron.weights[0]/perceptron.weights[1]
+                    perceptronLineFn.b = -perceptron.weights[2]/perceptron.weights[1]
+
+                    grid.updatePerceptronLine((x) => { return (-perceptronLineFn.slope * x) - perceptronLineFn.b})
+                    
+                }
+
+                pointCounter++
+                // console.log(pointCounter)
+
+                if (pointCounter >= grid.points.length * 20) {
+                    clearInterval(trainingAnimation)
+                    perceptron.isTraining = false
+                    console.log("Done Training")
+
+                    perceptronLineFn.slope = -perceptron.weights[0]/perceptron.weights[1]
+                    perceptronLineFn.b = -perceptron.weights[2]/perceptron.weights[1]
+
+                    grid.updatePerceptronLine((x) => { return (-perceptronLineFn.slope * x) - perceptronLineFn.b})
+
+                    perceptron.pulseRate = 30
+                }
+
+            }, 1)
+
+
+        }
+
+    
+    }, true)
+
+    trainButton = new Button(500, 550, buttonWidth, buttonHeight, "Train Perceptron", (el) => {
+
+        if (!el.disabled) {
+
+            el.hasMouseFocus = true
+            perceptron.isTraining = true
+            
+            // let point = 0;
+            
+            // let animateInterval = setInterval(() => {
+            
+            trainingCounter = 0
+
+
+            for (let i = 0; i < 100; i++) {
+
+                for (let aPoint of grid.points) {
+
+                    // if (point >= grid.points.length) {
+                    //     clearInterval(animateInterval)
+                    //     grid.highlightPoint = false
+                    //     return
+                    // }
+        
+                    
+                    // aPoint = grid.points[point]
+                    // grid.highlightPoint = aPoint
+        
+                    perceptron.train([aPoint.x, aPoint.y, 1], aPoint.classification)
+        
+                    // point++
+                    
+
+                }
+
+                perceptronLineFn.slope = -perceptron.weights[0]/perceptron.weights[1]
+                perceptronLineFn.b = -perceptron.weights[2]/perceptron.weights[1]
+
+                grid.updatePerceptronLine((x) => { return (-perceptronLineFn.slope * x) - perceptronLineFn.b})
+
+                
+
                 perceptron.isTraining = false
-                console.log("Done Training")
+
             }
 
-        }, 1)
+        }
 
+    }, true)
 
-    })
+    classifyWithPerceptronButtonSlow = new Button(500 + buttonWidth + 20, 550 + 20 + buttonHeight, buttonWidth, buttonHeight, "Classify With Perceptron\n(SLOW)", (el) => {
 
-    trainButton = new Button(2 * buttonWidth + 2*20, 550, buttonWidth, buttonHeight, "Train Perceptron", (el) => {
+        if (!el.disabled) {
 
-        el.hasMouseFocus = true
-        perceptron.isTraining = true
-        
-        // let point = 0;
-        
-        // let animateInterval = setInterval(() => {
-        
-        trainingCounter = 0
+            perceptron.pulseRate = 10
+            el.hasMouseFocus = true
 
+            let point = 0;
 
-        for (let i = 0; i < 100; i++) {
+            let animateInterval = setInterval(() => {
+                
+                if (point >= grid.points.length) {
+                    clearInterval(animateInterval)
+                    grid.highlightPoint = false
+                    perceptron.pulseRate = 30
+                    return
+                }
+
+                
+                aPoint = grid.points[point]
+                grid.highlightPoint = aPoint
+
+                aPoint.guessFill = (perceptron.guess(aPoint.x, aPoint.y) === 1) ? 'red' : 'blue'
+
+                point++
+
+                
+
+            }, 50)
+
+        }
+
+    }, true)
+
+    classifyWithPerceptronButton = new Button(500 + buttonWidth + 20, 550, buttonWidth, buttonHeight, "Classify With Perceptron", (el) => {
+
+        if (!el.disabled) {
+
+            el.hasMouseFocus = true
 
             for (let aPoint of grid.points) {
 
-                // if (point >= grid.points.length) {
-                //     clearInterval(animateInterval)
-                //     grid.highlightPoint = false
-                //     return
-                // }
-    
-                
-                // aPoint = grid.points[point]
-                // grid.highlightPoint = aPoint
-    
-                perceptron.train([aPoint.x, aPoint.y, 1], aPoint.classification)
-    
-                // point++
-                
+                aPoint.guessFill = (perceptron.guess(aPoint.x, aPoint.y) === 1) ? 'red' : 'blue'
 
             }
-
-            perceptronLineFn.slope = -perceptron.weights[0]/perceptron.weights[1]
-            perceptronLineFn.b = -perceptron.weights[2]/perceptron.weights[1]
-
-            grid.updatePerceptronLine((x) => { return (-perceptronLineFn.slope * x) - perceptronLineFn.b})
-
-            
-
-            perceptron.isTraining = false
-
-        }
-            
-
-
-    })
-
-    classifyWithPerceptronButtonSlow = new Button(buttonWidth * 3 + 20 * 3, 550 + 20 + buttonHeight, buttonWidth, buttonHeight, "Classify With Perceptron\n(SLOW)", (el) => {
-
-        el.hasMouseFocus = true
-
-        let point = 0;
-
-        let animateInterval = setInterval(() => {
-            
-            if (point >= grid.points.length) {
-                clearInterval(animateInterval)
-                grid.highlightPoint = false
-                return
-            }
-
-            
-            aPoint = grid.points[point]
-            grid.highlightPoint = aPoint
-
-            aPoint.guessFill = (perceptron.guess(aPoint.x, aPoint.y) === 1) ? 'red' : 'blue'
-
-            point++
-
-            if (point >= grid.points) {
-
-                clearInterval(animateInterval)
-
-
-            }
-            
-
-        }, 50)
-
-        
-
-
-    })
-
-    classifyWithPerceptronButton = new Button(buttonWidth * 3 + 20 * 3, 550, buttonWidth, buttonHeight, "Classify With Perceptron", (el) => {
-
-        el.hasMouseFocus = true
-
-        for (let aPoint of grid.points) {
-
-            aPoint.guessFill = (perceptron.guess(aPoint.x, aPoint.y) === 1) ? 'red' : 'blue'
 
         }
 
-    })
+    }, true)
 
     clickableItems.push(leftSlider)
     clickableItems.push(rightSlider)
